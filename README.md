@@ -1,4 +1,4 @@
-# Setup privateinternetaccess.com VPN on Barrier Breaker
+# OpenVPN on OpenWrt Barrier Breaker
 
 Steps stolen from [Logan Marchione's blog post](http://www.loganmarchione.com/2014/10/openwrt-with-openvpn-client-on-tp-link-tl-mr3020/).
 
@@ -92,22 +92,24 @@ reboot
 
 Start the VPN:
 
+```
 openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn --remote us-east.privateinternetaccess.com 1194
+```
 
 Confirm that output looks something like this:
 
 ```
 root@OpenWrt:~# openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn --remote us-east.privateinternetaccess.com 1194
-Sun Oct 19 20:27:00 2014 OpenVPN 2.3.4 mips-openwrt-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [MH] [IPv6] built on Sep 20 2014
-Sun Oct 19 20:27:00 2014 library versions: OpenSSL 1.0.1j 15 Oct 2014, LZO 2.08
-Sun Oct 19 20:27:00 2014 WARNING: file 'authuser' is group or others accessible
-Sun Oct 19 20:27:00 2014 UDPv4 link local: [undef]
-Sun Oct 19 20:27:00 2014 UDPv4 link remote: [AF_INET]216.155.129.59:1194
-Sun Oct 19 20:27:06 2014 [Private Internet Access] Peer Connection Initiated with [AF_INET]216.155.129.59:1194
-Sun Oct 19 20:27:09 2014 TUN/TAP device tun0 opened
-Sun Oct 19 20:27:09 2014 do_ifconfig, tt->ipv6=0, tt->did_ifconfig_ipv6_setup=0
-Sun Oct 19 20:27:09 2014 /sbin/ifconfig tun0 10.137.1.6 pointopoint 10.137.1.5 mtu 1500
-Sun Oct 19 20:27:09 2014 Initialization Sequence Completed
+Thu Nov 13 21:21:00 2014 OpenVPN 2.3.4 mips-openwrt-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [MH] [IPv6] built on Sep 20 2014
+Thu Nov 13 21:21:00 2014 library versions: OpenSSL 1.0.1j 15 Oct 2014, LZO 2.08
+Thu Nov 13 21:21:00 2014 WARNING: file 'authuser' is group or others accessible
+Thu Nov 13 21:21:00 2014 UDPv4 link local: [undef]
+Thu Nov 13 21:21:00 2014 UDPv4 link remote: [AF_INET]216.155.129.59:1194
+Thu Nov 13 21:21:06 2014 [Private Internet Access] Peer Connection Initiated with [AF_INET]216.155.129.59:1194
+Thu Nov 13 21:21:09 2014 TUN/TAP device tun0 opened
+Thu Nov 13 21:21:09 2014 do_ifconfig, tt->ipv6=0, tt->did_ifconfig_ipv6_setup=0
+Thu Nov 13 21:21:09 2014 /sbin/ifconfig tun0 10.137.1.6 pointopoint 10.137.1.5 mtu 1500
+Thu Nov 13 21:21:09 2014 Initialization Sequence Completed
 ```
 
 Check to see if tunnel interface exists:
