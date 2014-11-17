@@ -41,6 +41,12 @@ $password
 EOF
 ```
 
+Set permissions on authuser file:
+
+```
+chmod 400 /etc/openvpn/authuser
+```
+
 Create a generic OpenVPN config:
 
 ```
@@ -88,6 +94,12 @@ Reboot:
 
 ```
 reboot
+```
+
+Log back in:
+
+```
+ssh root@192.168.1.1
 ```
 
 Start the VPN:
