@@ -112,30 +112,45 @@ Confirm that output looks something like this:
 
 ```
 root@OpenWrt:~# openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn --remote us-east.privateinternetaccess.com 1194
-Thu Nov 13 21:21:00 2014 OpenVPN 2.3.4 mips-openwrt-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [MH] [IPv6] built on Sep 20 2014
-Thu Nov 13 21:21:00 2014 library versions: OpenSSL 1.0.1j 15 Oct 2014, LZO 2.08
-Thu Nov 13 21:21:00 2014 WARNING: file 'authuser' is group or others accessible
-Thu Nov 13 21:21:00 2014 UDPv4 link local: [undef]
-Thu Nov 13 21:21:00 2014 UDPv4 link remote: [AF_INET]216.155.129.59:1194
-Thu Nov 13 21:21:06 2014 [Private Internet Access] Peer Connection Initiated with [AF_INET]216.155.129.59:1194
-Thu Nov 13 21:21:09 2014 TUN/TAP device tun0 opened
-Thu Nov 13 21:21:09 2014 do_ifconfig, tt->ipv6=0, tt->did_ifconfig_ipv6_setup=0
-Thu Nov 13 21:21:09 2014 /sbin/ifconfig tun0 10.137.1.6 pointopoint 10.137.1.5 mtu 1500
-Thu Nov 13 21:21:09 2014 Initialization Sequence Completed
+Mon Nov 17 23:08:56 2014 OpenVPN 2.3.4 mips-openwrt-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [MH] [IPv6] built on Sep 20 2014
+Mon Nov 17 23:08:56 2014 library versions: OpenSSL 1.0.1j 15 Oct 2014, LZO 2.08
+Mon Nov 17 23:08:56 2014 UDPv4 link local: [undef]
+Mon Nov 17 23:08:56 2014 UDPv4 link remote: [AF_INET]108.61.57.214:1194
+Mon Nov 17 23:09:00 2014 [Private Internet Access] Peer Connection Initiated with [AF_INET]108.61.57.214:1194
+Mon Nov 17 23:09:02 2014 TUN/TAP device tun0 opened
+Mon Nov 17 23:09:02 2014 do_ifconfig, tt->ipv6=0, tt->did_ifconfig_ipv6_setup=0
+Mon Nov 17 23:09:02 2014 /sbin/ifconfig tun0 10.198.1.10 pointopoint 10.198.1.9 mtu 1500
+Mon Nov 17 23:09:02 2014 Initialization Sequence Completed
 ```
 
-Check to see if tunnel interface exists:
+Check to see if tunnel interface exists (You will have to open a second SSH connection because the openvpn command above must be running):
 
 ```
 ifconfig tun0
 ```
 
-Force router to use privteinternetaccess.com's DNS servers:
+```
+root@OpenWrt:~# ifconfig tun0
+tun0      Link encap:UNSPEC  HWaddr 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
+          inet addr:10.132.1.6  P-t-P:10.132.1.5  Mask:255.255.255.255
+          UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1500  Metric:1
+          RX packets:588 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:789 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:100
+          RX bytes:281373 (274.7 KiB)  TX bytes:159631 (155.8 KiB)
+```
+
+Close OpenVPN
+
+```
+ctrl+c
+```
+
+Force router to use privateinternetaccess.com's DNS servers:
 
 ```
 uci add_list dhcp.lan.dhcp_option="6,209.222.18.222,209.222.18.218"
 uci commit dhcp
-reboot
 ```
 
 Run VPN at startup. Go to Luci web interface, go to System -> Startup and add this before the `exit 0`:
@@ -144,3 +159,8 @@ Run VPN at startup. Go to Luci web interface, go to System -> Startup and add th
 openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn --remote us-east.privateinternetaccess.com 1194 &
 ```
 
+Reboot for DHCP and startup changes to take effect:
+
+```
+reboot
+```
