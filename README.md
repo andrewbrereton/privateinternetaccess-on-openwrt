@@ -27,7 +27,7 @@ Download OpenVPN config from privateinternetaccess.com:
 
 ```
 cd /etc/openvpn
-wget --no-check-certificate https://www.privateinternetaccess.com/openvpn/openvpn.zip
+wget --no-check-certificate https://www.privateinternetaccess.com/openvpn/openvpn-strong.zip
 unzip openvpn.zip
 rm openvpn.zip
 ```
@@ -54,11 +54,13 @@ cat >> /etc/openvpn/piageneric.ovpn << EOF
 client
 dev tun
 proto udp
+remote nl.privateinternetaccess.com 1197
 resolv-retry infinite
 nobind
 persist-key
 persist-tun
-ca ca.crt
+cipher aes-256-cbc
+auth sha256
 tls-client
 remote-cert-tls server
 auth-user-pass authuser
@@ -66,8 +68,9 @@ auth-nocache
 comp-lzo
 verb 1
 reneg-sec 0
-crl-verify crl.pem
-keepalive 10 120
+crl-verify crl.rsa.4096.pem
+ca ca.rsa.4096.crt
+disable-occ
 EOF
 ```
 
