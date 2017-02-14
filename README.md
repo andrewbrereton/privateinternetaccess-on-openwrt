@@ -28,8 +28,8 @@ Download OpenVPN config from privateinternetaccess.com:
 ```
 cd /etc/openvpn
 wget --no-check-certificate https://www.privateinternetaccess.com/openvpn/openvpn-strong.zip
-unzip openvpn.zip
-rm openvpn.zip
+unzip openvpn-strong.zip
+rm openvpn-strong.zip
 ```
 
 Create file with your privateinternetaccess.com credentials:
@@ -108,13 +108,13 @@ ssh root@192.168.1.1
 Start the VPN:
 
 ```
-openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn --remote us-east.privateinternetaccess.com 1194
+openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn
 ```
 
 Confirm that output looks something like this:
 
 ```
-root@OpenWrt:~# openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn --remote us-east.privateinternetaccess.com 1194
+root@OpenWrt:~# openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn
 Mon Nov 17 23:08:56 2014 OpenVPN 2.3.4 mips-openwrt-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [MH] [IPv6] built on Sep 20 2014
 Mon Nov 17 23:08:56 2014 library versions: OpenSSL 1.0.1j 15 Oct 2014, LZO 2.08
 Mon Nov 17 23:08:56 2014 UDPv4 link local: [undef]
@@ -159,7 +159,7 @@ uci commit dhcp
 Run VPN at startup. Go to Luci web interface, go to System -> Startup and add this before the `exit 0`:
 
 ```
-openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn --remote us-east.privateinternetaccess.com 1194 &
+openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn &
 ```
 
 Reboot for DHCP and startup changes to take effect:
