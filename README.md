@@ -93,6 +93,14 @@ config forwarding
 EOF
 ```
 
+If you want a kill switch, comment out:
+```
+config forwarding
+        option dest 'wan'
+        option src 'lan'
+```
+
+
 Reboot:
 
 ```
