@@ -27,9 +27,9 @@ Download OpenVPN config from privateinternetaccess.com:
 
 ```
 cd /etc/openvpn
-wget --no-check-certificate https://www.privateinternetaccess.com/openvpn/openvpn.zip
-unzip openvpn.zip
-rm openvpn.zip
+wget --no-check-certificate https://www.privateinternetaccess.com/openvpn/openvpn-strong.zip
+unzip openvpn-strong.zip
+rm openvpn-strong.zip
 ```
 
 Create file with your privateinternetaccess.com credentials:
@@ -54,11 +54,13 @@ cat >> /etc/openvpn/piageneric.ovpn << EOF
 client
 dev tun
 proto udp
+remote nl.privateinternetaccess.com 1197
 resolv-retry infinite
 nobind
 persist-key
 persist-tun
-ca ca.crt
+cipher aes-256-cbc
+auth sha256
 tls-client
 remote-cert-tls server
 auth-user-pass authuser
@@ -66,8 +68,9 @@ auth-nocache
 comp-lzo
 verb 1
 reneg-sec 0
-crl-verify crl.pem
-keepalive 10 120
+crl-verify crl.rsa.4096.pem
+ca ca.rsa.4096.crt
+disable-occ
 EOF
 ```
 
@@ -90,6 +93,27 @@ config forwarding
 EOF
 ```
 
+If you want a kill switch, comment out:
+```
+config forwarding
+        option dest 'wan'
+        option src 'lan'
+```
+
+to reboot after the connection is down, create (fill in your own IP at `IP_ISP`):
+```
+cat >> /etc/openvpn/checkvpn.sh << EOF
+IP_ISP="87.1.1.1"
+IP=`wget -qO- ifconfig.co`
+if [ $IP == $IP_ISP ]; then
+  echo `date` >> reboot.log
+  reboot
+fi
+EOF
+chmod +x /etc/openvpn/checkvpn.sh
+```
+open `crontab -e` and add `*/2 * * * * /root/checkvpn.sh`
+
 Reboot:
 
 ```
@@ -105,13 +129,13 @@ ssh root@192.168.1.1
 Start the VPN:
 
 ```
-openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn --remote us-east.privateinternetaccess.com 1194
+openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn
 ```
 
 Confirm that output looks something like this:
 
 ```
-root@OpenWrt:~# openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn --remote us-east.privateinternetaccess.com 1194
+root@OpenWrt:~# openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn
 Mon Nov 17 23:08:56 2014 OpenVPN 2.3.4 mips-openwrt-linux-gnu [SSL (OpenSSL)] [LZO] [EPOLL] [MH] [IPv6] built on Sep 20 2014
 Mon Nov 17 23:08:56 2014 library versions: OpenSSL 1.0.1j 15 Oct 2014, LZO 2.08
 Mon Nov 17 23:08:56 2014 UDPv4 link local: [undef]
@@ -156,7 +180,7 @@ uci commit dhcp
 Run VPN at startup. Go to Luci web interface, go to System -> Startup and add this before the `exit 0`:
 
 ```
-openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn --remote us-east.privateinternetaccess.com 1194 &
+openvpn --cd /etc/openvpn --config /etc/openvpn/piageneric.ovpn &
 ```
 
 Reboot for DHCP and startup changes to take effect:
